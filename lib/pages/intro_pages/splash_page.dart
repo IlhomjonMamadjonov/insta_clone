@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:instagram_clone/pages/home_page.dart';
 import 'package:instagram_clone/pages/intro_pages/signIn_page.dart';
 
 class SplashPage extends StatefulWidget {
@@ -15,7 +16,7 @@ class SplashPage extends StatefulWidget {
 class _SplashPageState extends State<SplashPage> {
   void openPage() {
     Timer(Duration(seconds: 3), () {
-      Navigator.pushReplacementNamed(context, SignInPage.id);
+      Navigator.pushReplacementNamed(context, HomePage.id);
     });
   }
 
@@ -57,4 +58,3 @@ class _SplashPageState extends State<SplashPage> {
     );
   }
 }
-//.asset("assets/images/splash.png")

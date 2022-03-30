@@ -1,9 +1,15 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:instagram_clone/models/user_model.dart' as model;
+import 'package:instagram_clone/pages/home_page.dart';
 import 'package:instagram_clone/pages/intro_pages/signIn_page.dart';
+import 'package:instagram_clone/services/auth_service.dart';
+import 'package:instagram_clone/services/data_service.dart';
+import 'package:instagram_clone/services/pref_service.dart';
+import 'package:instagram_clone/utils/utils_service.dart';
+import 'package:instagram_clone/utils/validation.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
-
-import '../home_page.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -25,6 +31,78 @@ class _SignUpPageState extends State<SignUpPage>
   TextEditingController cpasswordController = TextEditingController();
   TextEditingController nameController = TextEditingController();
   final TextEditingController numberController = TextEditingController();
+
+  bool isLoading = false;
+
+  void _openSignInPage() async {
+    String fullName = nameController.text.trim().toString();
+    String email = emailController.text.trim().toString();
+    String confirmPassword = cpasswordController.text.trim().toString();
+    String password = passwordController.text.trim().toString();
+
+    if ((email.isEmpty ||
+            password.isEmpty ||
+            fullName.isEmpty ||
+            confirmPassword.isEmpty) &&
+        password == confirmPassword) {
+      Utils.fireSnackBar("Please fill all the fields", context);
+      return;
+    }
+    if (password != confirmPassword) {
+      Utils.fireSnackBar(
+          "Password and confirm password doesn't match!", context);
+    }
+    if (!Validators.isValidEmail(email)) {
+      Utils.fireSnackBar(
+        "Please, enter valid Email",
+        context,
+      );
+      return;
+    }
+
+    if (!Validators.isValidPassword(password)) {
+      Utils.fireSnackBar(
+        "Password must be at least one upper case, one lower case, one digit, one Special character & be at least 8 characters in length",
+        context,
+      );
+      return;
+    }
+
+    setState(() {
+      isLoading = true;
+    });
+    var modelUser =
+        model.UserModel(password: password, email: email, fullName: fullName);
+    await AuthService.signUpUser(modelUser).then((response) {
+      _getFirebaseUser(modelUser, response);
+    });
+  }
+
+  void _getFirebaseUser(
+      model.UserModel modelUser, Map<String, User?> map) async {
+    setState(() {
+      isLoading = false;
+    });
+
+    if (!map.containsKey("SUCCESS")) {
+      if (map.containsKey("weak-password"))
+        Utils.fireSnackBar("The password provided is too weak.", context);
+      if (map.containsKey("email-already-in-use"))
+        Utils.fireSnackBar(
+            "The account already exists for that email.", context);
+      if (map.containsKey("ERROR"))
+        Utils.fireSnackBar("Check Your Information.", context);
+      return;
+    }
+    User? user = map["SUCCESS"];
+    if (user == null) return;
+
+    await Prefs.store(StorageKeys.UID, user.uid);
+    modelUser.uid = user.uid;
+
+    DataService.storeUser(modelUser).then(
+        (value) => {Navigator.pushReplacementNamed(context, HomePage.id)});
+  }
 
   @override
   void initState() {
@@ -81,7 +159,6 @@ class _SignUpPageState extends State<SignUpPage>
                     Expanded(
                         child: TabBarView(
                       children: [
-                        //email
                         Column(
                           children: [
                             SizedBox(
@@ -191,7 +268,10 @@ class _SignUpPageState extends State<SignUpPage>
                         ),
                         //phone
                         Column(
-                          children: [SizedBox(height: 15,),
+                          children: [
+                            SizedBox(
+                              height: 15,
+                            ),
                             InternationalPhoneNumberInput(
                               maxLength: 12,
                               onInputChanged: (number) {
@@ -235,16 +315,13 @@ class _SignUpPageState extends State<SignUpPage>
                             width: MediaQuery.of(context).size.width,
                             height: 45,
                             child: ElevatedButton(
-                              onPressed: () {
-                                Navigator.pushReplacementNamed(context, HomePage.id);
-                              },
+                              onPressed: _openSignInPage,
                               child: Text("Sign up"),
                             ),
                           ),
                         ],
                       ),
                     ),
-
                   ],
                 )),
                 // already have an account??
@@ -279,24 +356,3 @@ class _SignUpPageState extends State<SignUpPage>
     );
   }
 }
-/*
-                  // #Email
-  Container(
-                    padding: EdgeInsets.symmetric(horizontal: 8),
-                    height: 50,
-                    decoration: BoxDecoration(
-                        borderRadius: BorderRadius.circular(7),
-                        color: Colors.white.withOpacity(0.2)),
-                    child: TextField(
-                      controller: emailController,
-                      textInputAction: TextInputAction.next,
-                      decoration: InputDecoration(
-                          hintText: "Email",
-                          hintStyle: TextStyle(color: Colors.white),
-                          border: InputBorder.none),
-                    ),
-                  ),
-                  SizedBox(
-                    height: 10,
-                  ),
- */

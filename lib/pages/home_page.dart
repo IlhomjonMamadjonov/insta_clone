@@ -49,7 +49,7 @@ class _HomePageState extends State<HomePage> {
           pageController.animateToPage(i,
               duration: Duration(milliseconds: 250), curve: Curves.easeIn);
         },
-        activeColor: Color.fromRGBO(245, 96, 64, 1),
+        activeColor: Colors.black,
         items: [
           BottomNavigationBarItem(
               icon: Icon(
@@ -58,9 +58,26 @@ class _HomePageState extends State<HomePage> {
               )),
           BottomNavigationBarItem(icon: Icon(Icons.search, size: 32)),
           BottomNavigationBarItem(icon: Icon(Icons.add_box, size: 32)),
-          BottomNavigationBarItem(icon: Icon(Icons.favorite, size: 32)),
+          BottomNavigationBarItem(icon: Icon(Icons.favorite_border, size: 32)),
           BottomNavigationBarItem(
-              icon: Icon(CupertinoIcons.person_circle, size: 32)),
+              icon: Container(
+                width: 30,
+                height: 30,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.grey, width: 1),
+                  borderRadius: BorderRadius.circular(60),
+                ),
+                child: Container(
+                  margin: EdgeInsets.all(2),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Colors.grey, width: 1),
+                    image: DecorationImage(
+                        image: AssetImage("assets/images/profile_page_img/profil_img.JPG"),
+                        fit: BoxFit.cover),
+                    borderRadius: BorderRadius.circular(60),
+                  ),
+                ),
+              )),
         ],
       ),
     );
