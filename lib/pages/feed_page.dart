@@ -3,11 +3,11 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
 import 'package:instagram_clone/models/full_model.dart';
-import 'package:instagram_clone/models/post_list.dart';
 import 'package:instagram_clone/models/post_model.dart';
 import 'package:instagram_clone/models/story_list.dart';
 import 'package:instagram_clone/pages/chat_page.dart';
 import 'package:instagram_clone/services/data_service.dart';
+import 'package:instagram_clone/utils/feed_widget.dart';
 
 class FeedPage extends StatefulWidget {
   const FeedPage({Key? key}) : super(key: key);
@@ -17,15 +17,16 @@ class FeedPage extends StatefulWidget {
 }
 
 class _FeedPageState extends State<FeedPage> {
-  bool isLoading = true;
+  bool isLoading = false;
   List<Post> items = [];
 
-  void _apiLoadFeeds() {
+  void _apiLoadFeeds() async {
     setState(() {
       isLoading = true;
     });
-    DataService.loadFeeds().then((value) => {
-      _resLoadFeeds(value),
+
+    DataService.loadFeeds().then((posts) => {
+      _resLoadFeeds(posts)
     });
   }
 
@@ -33,28 +34,6 @@ class _FeedPageState extends State<FeedPage> {
     setState(() {
       items = posts;
       isLoading = false;
-    });
-  }
-
-  void _apiPostLike(Post post) async {
-    setState(() {
-      isLoading = true;
-    });
-    await DataService.likePost(post, true);
-    setState(() {
-      isLoading = false;
-      post.isLiked = true;
-    });
-  }
-
-  void _apiPostUnLike(Post post) async {
-    setState(() {
-      isLoading = true;
-    });
-    await DataService.likePost(post, false);
-    setState(() {
-      isLoading = false;
-      post.isLiked = false;
     });
   }
 
@@ -68,7 +47,7 @@ class _FeedPageState extends State<FeedPage> {
   //       _apiLoadFeeds(),
   //     });
   //   }
-  // }
+  // }1
 
   @override
   void initState() {
@@ -76,7 +55,6 @@ class _FeedPageState extends State<FeedPage> {
     super.initState();
     _apiLoadFeeds();
   }
-
 
   @override
   Widget build(BuildContext context) {
@@ -88,7 +66,7 @@ class _FeedPageState extends State<FeedPage> {
         title: Text(
           "Instagram",
           style: TextStyle(
-              fontFamily: "Billabong", fontSize: 32, color: Colors.black),
+              fontFamily: "Billabong", fontSize: 35, color: Colors.black,fontWeight: FontWeight.w500),
         ),
         actions: [
           Container(
@@ -107,35 +85,36 @@ class _FeedPageState extends State<FeedPage> {
       body: Stack(
         children: [
           SingleChildScrollView(
-            child: Container(
-              child: Column(
-                children: [
-                  // #story
-                  SizedBox(
-                    height: MediaQuery.of(context).size.height /
-                        6.3, // height: 120,
-                    child: ListView.builder(
-                        shrinkWrap: true,
-                        itemCount: StoryList().elements.length,
-                        scrollDirection: Axis.horizontal,
-                        itemBuilder: (context, index) {
-                          return storyBuilder(
-                              story: StoryList().elements[index]);
-                        }),
-                  ),
-                  Divider(
-                    color: Colors.black12,
-                    thickness: 1,
-                  ),
-                  ListView.builder(
-                      itemCount: items.length,
-                      physics: NeverScrollableScrollPhysics(),
+            child: Column(
+              children: [
+                // #story
+                SizedBox(
+                  height: MediaQuery.of(context).size.height /
+                      7, // height: 120,
+                  child: ListView.builder(
                       shrinkWrap: true,
+                      itemCount: StoryList().elements.length,
+                      scrollDirection: Axis.horizontal,
                       itemBuilder: (context, index) {
-                        return postBuilder(items[index]);
-                      })
-                ],
-              ),
+                        return storyBuilder(
+                            story: StoryList().elements[index]);
+                      }),
+                ),
+                Divider(
+                  color: Colors.black12,
+                  thickness: 1,
+                ),
+                ListView.builder(
+                    itemCount: items.length,
+                    physics: NeverScrollableScrollPhysics(),
+                    shrinkWrap: true,
+                    itemBuilder: (context, index) {
+                      return FeedWidget(
+                        post: items[index],
+                        load: _apiLoadFeeds,
+                      );
+                    })
+              ],
             ),
           ),
           isLoading
@@ -149,103 +128,6 @@ class _FeedPageState extends State<FeedPage> {
   }
 
 
-  // #postBuilder
-  Widget postBuilder(Post post) {
-    return Container(
-      child: Column(
-        children: [
-          ListTile(
-            visualDensity: VisualDensity.compact,
-            leading: ClipRRect(
-              borderRadius: BorderRadius.circular(40),
-              child: Image(
-                image: AssetImage(post.imageUser != null
-                    ? post.imageUser!
-                    : "assets/images/default.jpg"),
-                height: 40,
-                width: 40,
-                fit: BoxFit.cover,
-              ),
-            ),
-            title: Text(
-              post.fullName,
-              overflow: TextOverflow.ellipsis,
-              maxLines: 1,
-              style: TextStyle(
-                  fontWeight: FontWeight.bold, color: CupertinoColors.black),
-            ),
-            subtitle: Text(
-              post.createdDate.substring(0,16),
-              style: TextStyle(color: Colors.black45),
-            ),
-            trailing: InkWell(
-              child: Icon(
-                Icons.more_vert,
-                color: Colors.black,
-              ),
-            ),
-          ),
-          // #postImage
-          CachedNetworkImage(
-            imageUrl: post.postImage,
-            placeholder: (context, url) => Center(child: CircularProgressIndicator(),),
-            errorWidget: (context, url, error) => Icon(Icons.error),
-            fit: BoxFit.cover,
-          ),
-          // #Row action buttons
-          Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Row(
-                  children: [
-                    // like
-                    post.isLiked
-                        ? Icon(
-                            Icons.favorite_border,
-                            size: 30,
-                          )
-                        : Icon(
-                            Icons.favorite,
-                            color: Colors.red,
-                            size: 30,
-                          ),
-                    SizedBox(width: 10),
-                    //comment
-                    Icon(FontAwesomeIcons.comment),
-                    SizedBox(width: 10),
-                    Icon(FontAwesomeIcons.paperPlane),
-                  ],
-                ),
-                Icon(
-                  Icons.bookmark_border,
-                  color: Colors.black,
-                  size: 30,
-                ),
-              ],
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
-            child: RichText(
-              softWrap: true,
-              overflow: TextOverflow.visible,
-              text: TextSpan(
-                children: [
-                  TextSpan(
-                    text: " ${post.caption}",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
 
   // #story builder
   Widget storyBuilder({required FullModel story}) {
@@ -292,3 +174,111 @@ class _FeedPageState extends State<FeedPage> {
     return name.length < 11 ? name : name.substring(0, 6) + "...";
   }
 }
+/*
+ // #postBuilder
+  Widget postBuilder(Post post) {
+    return Column(
+      children: [
+        ListTile(
+          visualDensity: VisualDensity.compact,
+          leading: ClipRRect(
+            borderRadius: BorderRadius.circular(40),
+            child: Image(
+              image: AssetImage(post.imageUser != null
+                  ? post.imageUser!
+                  : "assets/images/default.jpg"),
+              height: 40,
+              width: 40,
+              fit: BoxFit.cover,
+            ),
+          ),
+          title: Text(
+            post.fullName,
+            overflow: TextOverflow.ellipsis,
+            maxLines: 1,
+            style: TextStyle(
+                fontWeight: FontWeight.bold, color: CupertinoColors.black),
+          ),
+          subtitle: Text(
+            post.createdDate.substring(0, 16),
+            style: TextStyle(color: Colors.black45),
+          ),
+          trailing: InkWell(
+            child: Icon(
+              Icons.more_vert,
+              color: Colors.black,
+            ),
+          ),
+        ),
+        // #postImage
+        CachedNetworkImage(
+          imageUrl: post.postImage,
+          placeholder: (context, url) => Center(
+            child: CircularProgressIndicator(),
+          ),
+          errorWidget: (context, url, error) => Icon(Icons.error),
+          fit: BoxFit.cover,
+        ),
+        // #Row action buttons
+        Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Row(
+                children: [
+                  // like
+                  IconButton(
+                      onPressed: () {
+                        if (!post.isLiked) {
+                          _apiPostLike(post);
+                        } else {
+                          _apiPostUnLike(post);
+                        }
+                      },
+          icon: post.isLiked
+              ? Icon(
+            Icons.favorite,
+            color: Colors.red,
+            size: 30,
+          )
+              : Icon(
+            Icons.favorite_border,
+            size: 30,
+          ),
+        ),
+                  SizedBox(width: 10),
+                  //comment
+                  Icon(FontAwesomeIcons.comment),
+                  SizedBox(width: 10),
+                  Icon(FontAwesomeIcons.paperPlane),
+                ],
+              ),
+              Icon(
+                Icons.bookmark_border,
+                color: Colors.black,
+                size: 30,
+              ),
+            ],
+          ),
+        ),
+        Container(
+          width: MediaQuery.of(context).size.width,
+          margin: EdgeInsets.only(left: 10, right: 10, bottom: 10),
+          child: RichText(
+            softWrap: true,
+            overflow: TextOverflow.visible,
+            text: TextSpan(
+              children: [
+                TextSpan(
+                  text: " ${post.caption}",
+                  style: TextStyle(color: Colors.black),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+ */

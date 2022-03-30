@@ -10,7 +10,7 @@ import 'package:instagram_clone/services/data_service.dart';
 import 'package:instagram_clone/services/file_service.dart';
 
 class ProfilePage extends StatefulWidget {
-  static const String id = "/profile_ui";
+  static const String id = "/profile_page";
 
   @override
   _ProfilePageState createState() => _ProfilePageState();
@@ -515,60 +515,3 @@ class _ProfilePageState extends State<ProfilePage> {
 // String _moreText(String name) {
 //   return name.length < 11 ? name : name.substring(0, 6) + "...";
 // }
-/*
-/// grid and tagged buttons
-                      Container(
-                          height: 44,
-                          decoration: BoxDecoration(
-                              border:
-                              Border(top: BorderSide(color: Colors.grey.shade300))),
-                          child: Row(
-                            children: [
-                              ///grid
-                              Container(
-                                width: MediaQuery.of(context).size.width / 2,
-                                decoration: BoxDecoration(
-                                    border: Border(
-                                      bottom: BorderSide(color: Colors.black),
-                                    )),
-                                child: MaterialButton(
-                                  onPressed: () {},
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.grid_on),
-                                    color: Colors.black,
-                                  ),
-                                ),
-                              ),
-
-                              ///tag
-                              Container(
-                                width: MediaQuery.of(context).size.width / 2,
-                                child: MaterialButton(
-                                  onPressed: () {},
-                                  child: IconButton(
-                                    onPressed: () {},
-                                    icon: Icon(Icons.person_pin_outlined),
-                                    color: Colors.grey.shade700,
-                                  ),
-                                ),
-                              ),
-                            ],
-                          )),
-
-                      ///grid posts
-                      GridView.builder(
-                        physics: NeverScrollableScrollPhysics(),
-                        shrinkWrap: true,
-                        itemCount: posts.length,
-                        itemBuilder: (ctx, i) {
-                          return buildGrid(i);
-                        },
-                        scrollDirection: Axis.vertical,
-                        gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                          crossAxisCount: 3,
-                          crossAxisSpacing: 1,
-                          mainAxisSpacing: 2,
-                        ),
-                      ),
- */
