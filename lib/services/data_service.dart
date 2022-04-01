@@ -2,21 +2,31 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:instagram_clone/models/post_model.dart';
 import 'package:instagram_clone/models/user_model.dart';
 import 'package:instagram_clone/services/pref_service.dart';
+import 'package:instagram_clone/utils/utils_service.dart';
+
 
 class DataService {
   // init
   static final instance = FirebaseFirestore.instance;
 
-  // folders
+  // folder
   static const String folderUsers = "users";
   static const String folderPosts = "posts";
   static const String folderFeeds = "feeds";
   static const String folderFollowing = "following";
   static const String folderFollowers = "followers";
 
-  // User
+  // UserModel
   static Future<void> storeUser(UserModel user) async {
     user.uid = (await Prefs.load(StorageKeys.UID))!;
+
+    Map<String, String> params = await Utils.deviceParams();
+
+    user.device_id = params["device_id"]!;
+    user.device_type = params["device_type"]!;
+    user.device_token = params["device_token"]!;
+
+
     return instance.collection(folderUsers).doc(user.uid).set(user.toJson());
   }
 
@@ -25,18 +35,10 @@ class DataService {
     var value = await instance.collection(folderUsers).doc(uid).get();
     UserModel user = UserModel.fromJson(value.data()!);
 
-    var querySnapshot1 = await instance
-        .collection(folderUsers)
-        .doc(uid)
-        .collection(folderFollowers)
-        .get();
+    var querySnapshot1 = await instance.collection(folderUsers).doc(uid).collection(folderFollowers).get();
     user.followersCount = querySnapshot1.docs.length;
 
-    var querySnapshot2 = await instance
-        .collection(folderUsers)
-        .doc(uid)
-        .collection(folderFollowing)
-        .get();
+    var querySnapshot2 = await instance.collection(folderUsers).doc(uid).collection(folderFollowing).get();
     user.followingCount = querySnapshot2.docs.length;
 
     return user;
@@ -84,19 +86,9 @@ class DataService {
     post.imageUser = me.imgUrl;
     post.createdDate = DateTime.now().toString();
 
-    String postId = instance
-        .collection(folderUsers)
-        .doc(me.uid)
-        .collection(folderPosts)
-        .doc()
-        .id;
+    String postId = instance.collection(folderUsers).doc(me.uid).collection(folderPosts).doc().id;
     post.id = postId;
-    await instance
-        .collection(folderUsers)
-        .doc(me.uid)
-        .collection(folderPosts)
-        .doc(postId)
-        .set(post.toJson());
+    await instance.collection(folderUsers).doc(me.uid).collection(folderPosts).doc(postId).set(post.toJson());
     return post;
   }
 
@@ -109,15 +101,11 @@ class DataService {
   static Future<List<Post>> loadFeeds() async {
     List<Post> posts = [];
     String uid = (await Prefs.load(StorageKeys.UID))!;
-    var querySnapshot = await instance
-        .collection(folderUsers)
-        .doc(uid)
-        .collection(folderFeeds)
-        .get();
+    var querySnapshot = await instance.collection(folderUsers).doc(uid).collection(folderFeeds).get();
 
     for (var element in querySnapshot.docs) {
       Post post = Post.fromJson(element.data());
-      if (post.uid == uid) post.isMine = true;
+      if(post.uid == uid) post.isMine = true;
       posts.add(post);
     }
 
@@ -127,11 +115,7 @@ class DataService {
   static Future<List<Post>> loadPosts() async {
     List<Post> posts = [];
     String uid = (await Prefs.load(StorageKeys.UID))!;
-    var querySnapshot = await instance
-        .collection(folderUsers)
-        .doc(uid)
-        .collection(folderPosts)
-        .get();
+    var querySnapshot = await instance.collection(folderUsers).doc(uid).collection(folderPosts).get();
 
     for (var element in querySnapshot.docs) {
       posts.add(Post.fromJson(element.data()));
@@ -143,20 +127,10 @@ class DataService {
     String uid = (await Prefs.load(StorageKeys.UID))!;
     post.isLiked = liked;
 
-    await instance
-        .collection(folderUsers)
-        .doc(uid)
-        .collection(folderFeeds)
-        .doc(post.id)
-        .update(post.toJson());
+    await instance.collection(folderUsers).doc(uid).collection(folderFeeds).doc(post.id).update(post.toJson());
 
-    if (uid == post.uid) {
-      await instance
-          .collection(folderUsers)
-          .doc(uid)
-          .collection(folderPosts)
-          .doc(post.id)
-          .update(post.toJson());
+    if(uid == post.uid) {
+      await instance.collection(folderUsers).doc(uid).collection(folderPosts).doc(post.id).update(post.toJson());
     }
 
     return post;
@@ -166,16 +140,11 @@ class DataService {
     String uid = (await Prefs.load(StorageKeys.UID))!;
     List<Post> posts = [];
 
-    var querySnapshot = await instance
-        .collection(folderUsers)
-        .doc(uid)
-        .collection(folderFeeds)
-        .where("isLiked", isEqualTo: true)
-        .get();
+    var querySnapshot = await instance.collection(folderUsers).doc(uid).collection(folderFeeds).where("isLiked", isEqualTo: true).get();
 
     for (var element in querySnapshot.docs) {
       Post post = Post.fromJson(element.data());
-      if (post.uid == uid) post.isMine = true;
+      if(post.uid == uid) post.isMine = true;
       posts.add(post);
     }
 
@@ -187,20 +156,16 @@ class DataService {
     UserModel me = await loadUser();
 
     // I followed to someone
-    await instance
-        .collection(folderUsers)
-        .doc(me.uid)
-        .collection(folderFollowing)
-        .doc(someone.uid)
-        .set(someone.toJson());
+    await instance.collection(folderUsers).doc(me.uid).collection(folderFollowing).doc(someone.uid).set(someone.toJson());
 
     // I am in someone`s followers
-    await instance
-        .collection(folderUsers)
-        .doc(someone.uid)
-        .collection(folderFollowers)
-        .doc(me.uid)
-        .set(me.toJson());
+    await instance.collection(folderUsers).doc(someone.uid).collection(folderFollowers).doc(me.uid).set(me.toJson());
+
+    // for notification
+
+    // await HttpService.POST(HttpService.paramCreate(someone.device_token, me.fullName, someone.fullName)).then((value) => {
+    //   print("response notification: ${value.toString()}")
+    // });
 
     return someone;
   }
@@ -208,21 +173,11 @@ class DataService {
   static Future<UserModel> unFollowUser(UserModel someone) async {
     UserModel me = await loadUser();
 
-    // I unfollowed to someone
-    await instance
-        .collection(folderUsers)
-        .doc(me.uid)
-        .collection(folderFollowing)
-        .doc(someone.uid)
-        .delete();
+    // I un followed to someone
+    await instance.collection(folderUsers).doc(me.uid).collection(folderFollowing).doc(someone.uid).delete();
 
     // I am not in someone`s followers
-    await instance
-        .collection(folderUsers)
-        .doc(someone.uid)
-        .collection(folderFollowers)
-        .doc(me.uid)
-        .delete();
+    await instance.collection(folderUsers).doc(someone.uid).collection(folderFollowers).doc(me.uid).delete();
 
     return someone;
   }
@@ -231,11 +186,7 @@ class DataService {
     // Store someone`s posts to my feed
     List<Post> posts = [];
 
-    var querySnapshot = await instance
-        .collection(folderUsers)
-        .doc(someone.uid)
-        .collection(folderPosts)
-        .get();
+    var querySnapshot = await instance.collection(folderUsers).doc(someone.uid).collection(folderPosts).get();
 
     for (var element in querySnapshot.docs) {
       Post post = Post.fromJson(element.data());
@@ -243,7 +194,7 @@ class DataService {
       posts.add(post);
     }
 
-    for (Post post in posts) {
+    for(Post post in posts) {
       storeFeed(post);
     }
   }
@@ -252,38 +203,24 @@ class DataService {
     // Remove someone`s posts from my feed
     List<Post> posts = [];
 
-    var querySnapshot = await instance
-        .collection(folderUsers)
-        .doc(someone.uid)
-        .collection(folderPosts)
-        .get();
+    var querySnapshot = await instance.collection(folderUsers).doc(someone.uid).collection(folderPosts).get();
     for (var element in querySnapshot.docs) {
       posts.add(Post.fromJson(element.data()));
     }
 
-    for (Post post in posts) {
+    for(Post post in posts){
       removeFeed(post);
     }
   }
 
   static Future removeFeed(Post post) async {
     String uid = (await Prefs.load(StorageKeys.UID))!;
-
-    return await instance
-        .collection(folderUsers)
-        .doc(uid)
-        .collection(folderFeeds)
-        .doc(post.id)
-        .delete();
+    return await instance.collection(folderUsers).doc(uid).collection(folderFeeds).doc(post.id).delete();
   }
 
   static Future removePost(Post post) async {
+    String uid = (await Prefs.load(StorageKeys.UID))!;
     await removeFeed(post);
-    return await instance
-        .collection(folderUsers)
-        .doc(post.uid)
-        .collection(folderPosts)
-        .doc(post.id)
-        .delete();
+    return await instance.collection(folderUsers).doc(uid).collection(folderPosts).doc(post.id).delete();
   }
 }

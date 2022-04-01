@@ -2,7 +2,6 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/user_model.dart';
 import 'package:instagram_clone/services/data_service.dart';
-import 'package:instagram_clone/utils/appbar_widget.dart';
 
 class SearchPage extends StatefulWidget {
   const SearchPage({Key? key}) : super(key: key);
@@ -70,6 +69,8 @@ class _SearchPageState extends State<SearchPage> {
   @override
   Widget build(BuildContext context) {
     return SafeArea(
+      left: false,
+      right: false,
       child: Scaffold(
         backgroundColor: Colors.white,
         body: Stack(

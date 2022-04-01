@@ -85,6 +85,7 @@ class _FeedPageState extends State<FeedPage> {
       body: Stack(
         children: [
           SingleChildScrollView(
+            physics: BouncingScrollPhysics(),
             child: Column(
               children: [
                 // #story

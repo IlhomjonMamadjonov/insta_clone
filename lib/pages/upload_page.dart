@@ -36,26 +36,24 @@ class _UploadPageState extends State<UploadPage> {
         context: context,
         builder: (BuildContext bc) {
           return SafeArea(
-            child: Container(
-              child:  Wrap(
-                children: <Widget>[
-                   ListTile(
-                      leading:  Icon(Icons.photo_library),
-                      title:  Text('Gallery'),
-                      onTap: () {
-                        getMyImage(ImageSource.gallery);
-                        Navigator.of(context).pop();
-                      }),
-                   ListTile(
-                    leading:  Icon(Icons.photo_camera),
-                    title:  Text('Camera'),
+            child: Wrap(
+              children: <Widget>[
+                 ListTile(
+                    leading:  Icon(Icons.photo_library),
+                    title:  Text('Gallery'),
                     onTap: () {
-                      getMyImage(ImageSource.camera);
+                      getMyImage(ImageSource.gallery);
                       Navigator.of(context).pop();
-                    },
-                  ),
-                ],
-              ),
+                    }),
+                 ListTile(
+                  leading:  Icon(Icons.photo_camera),
+                  title:  Text('Camera'),
+                  onTap: () {
+                    getMyImage(ImageSource.camera);
+                    Navigator.of(context).pop();
+                  },
+                ),
+              ],
             ),
           );
         });

@@ -54,6 +54,7 @@ class _LikesPageState extends State<LikesPage> {
         children: [
           items.length>0?
           ListView.builder(
+            physics: BouncingScrollPhysics(),
               itemCount: items.length,
               itemBuilder: (context, index) {
                 return FeedWidget(

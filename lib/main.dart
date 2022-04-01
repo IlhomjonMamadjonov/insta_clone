@@ -1,31 +1,29 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
+import 'package:flutter_local_notifications/flutter_local_notifications.dart';
 import 'package:instagram_clone/pages/chat_page.dart';
 import 'package:instagram_clone/pages/home_page.dart';
 import 'package:instagram_clone/pages/intro_pages/signIn_page.dart';
 import 'package:instagram_clone/pages/intro_pages/signUp_page.dart';
 import 'package:instagram_clone/pages/intro_pages/splash_page.dart';
-import 'package:instagram_clone/services/pref_service.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   await Firebase.initializeApp();
-  runApp(const MyApp());
+
+  /// Notification
+  var initAndroidSetting = const AndroidInitializationSettings('@mipmap/ic_launcher');
+  var initIosSetting = const IOSInitializationSettings();
+  var initSetting = InitializationSettings(android: initAndroidSetting, iOS: initIosSetting);
+  await FlutterLocalNotificationsPlugin().initialize(initSetting);
+  SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp, DeviceOrientation.portraitDown]).then((_) {
+    runApp(const MyApp());
+  });
+  // runApp(const MyApp());
 }
-Widget _startPage() {
-  return StreamBuilder<User?>(
-      stream: FirebaseAuth.instance.authStateChanges(),
-      builder: (BuildContext context, snapshot) {
-        if (snapshot.hasData) {
-          Prefs.store(StorageKeys.UID, snapshot.data!.uid);
-          return const SplashPage();
-        } else {
-          Prefs.remove(StorageKeys.UID);
-          return const SignInPage();
-        }
-      });
-}
+
 class MyApp extends StatelessWidget {
   const MyApp({Key? key}) : super(key: key);
 
@@ -36,7 +34,7 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         primarySwatch: Colors.blue,
       ),
-      home: _startPage(),
+      home: SplashPage(),
       debugShowCheckedModeBanner: false,
       routes: {
         SplashPage.id:(context)=>SplashPage(),

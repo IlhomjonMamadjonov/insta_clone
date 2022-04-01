@@ -1,3 +1,4 @@
+import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/pages/feed_page.dart';
@@ -5,6 +6,7 @@ import 'package:instagram_clone/pages/likes_page.dart';
 import 'package:instagram_clone/pages/profile_page.dart';
 import 'package:instagram_clone/pages/search_page.dart';
 import 'package:instagram_clone/pages/upload_page.dart';
+import 'package:instagram_clone/utils/utils_service.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({Key? key}) : super(key: key);
@@ -18,11 +20,22 @@ class _HomePageState extends State<HomePage> {
   PageController pageController = PageController();
   int _currentIndex = 0;
 
+  _initNotification() {
+    FirebaseMessaging.onMessage.listen((RemoteMessage message) {
+      print("Message: ${message.notification.toString()}");
+      Utils.showLocalNotification(message);
+    });
+    FirebaseMessaging.onMessageOpenedApp.listen((RemoteMessage message) {
+      Utils.showLocalNotification(message);
+    });
+  }
+
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
     pageController = PageController();
+    _initNotification();
   }
 
   @override
