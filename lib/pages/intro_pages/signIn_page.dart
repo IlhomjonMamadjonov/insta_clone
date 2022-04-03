@@ -5,6 +5,8 @@ import 'package:instagram_clone/pages/intro_pages/signUp_page.dart';
 import 'package:instagram_clone/services/auth_service.dart';
 import 'package:instagram_clone/services/pref_service.dart';
 import 'package:instagram_clone/utils/utils_service.dart';
+import 'package:instagram_clone/widgets/button_widget.dart';
+import 'package:instagram_clone/widgets/textfield_widget.dart';
 
 class SignInPage extends StatefulWidget {
   const SignInPage({Key? key}) : super(key: key);
@@ -94,22 +96,7 @@ class _SignInPageState extends State<SignInPage> {
                           height: 15,
                         ),
                         // #Email
-                        Container(
-                          padding: EdgeInsets.symmetric(horizontal: 8),
-                          height: 50,
-                          decoration: BoxDecoration(
-                              border: Border.all(color: Colors.grey),
-                              borderRadius: BorderRadius.circular(7),
-                              color: Colors.grey.withOpacity(0.03)),
-                          child: TextField(
-                            controller: emailController,
-                            textInputAction: TextInputAction.next,
-                            decoration: InputDecoration(
-                                hintText: "Email",
-                                hintStyle: TextStyle(color: Colors.grey),
-                                border: InputBorder.none),
-                          ),
-                        ),
+                        textfield(hintText: "Email", controller: emailController),
                         SizedBox(
                           height: 10,
                         ),
@@ -145,14 +132,7 @@ class _SignInPageState extends State<SignInPage> {
                           height: 10,
                         ),
                         // #button sign in
-                        Container(
-                          width: MediaQuery.of(context).size.width,
-                          height: 45,
-                          child: ElevatedButton(
-                            onPressed: _openHomePage,
-                            child: Text("Log in"),
-                          ),
-                        ),
+                    button(title: "Log in", onPressed: _openHomePage),
                         SizedBox(
                           height: 15,
                         ),

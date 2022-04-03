@@ -1,6 +1,7 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:instagram_clone/models/user_model.dart';
+import 'package:instagram_clone/pages/other_user_profile_page.dart';
 import 'package:instagram_clone/services/data_service.dart';
 
 class SearchPage extends StatefulWidget {
@@ -123,6 +124,9 @@ class _SearchPageState extends State<SearchPage> {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 5),
       child: ListTile(
+        onTap: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>OthersProfile(uid: user.uid)));
+        },
         leading: Container(
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
@@ -131,7 +135,7 @@ class _SearchPageState extends State<SearchPage> {
           padding: EdgeInsets.all(2),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(25),
-            child: user.imgUrl != null ? CachedNetworkImage(
+            child: user.imgUrl!= null ? CachedNetworkImage(
               height: 40,
               width: 40,
               fit: BoxFit.cover,

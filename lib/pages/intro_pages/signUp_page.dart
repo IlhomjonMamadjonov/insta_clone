@@ -9,7 +9,10 @@ import 'package:instagram_clone/services/data_service.dart';
 import 'package:instagram_clone/services/pref_service.dart';
 import 'package:instagram_clone/utils/utils_service.dart';
 import 'package:instagram_clone/utils/validation.dart';
+import 'package:instagram_clone/widgets/button_widget.dart';
 import 'package:intl_phone_number_input/intl_phone_number_input.dart';
+
+import '../../widgets/textfield_widget.dart';
 
 class SignUpPage extends StatefulWidget {
   const SignUpPage({Key? key}) : super(key: key);
@@ -34,7 +37,7 @@ class _SignUpPageState extends State<SignUpPage>
 
   bool isLoading = false;
 
-  void _openSignInPage() async {
+  void _openHomePage() async {
     String fullName = nameController.text.trim().toString();
     String email = emailController.text.trim().toString();
     String confirmPassword = cpasswordController.text.trim().toString();
@@ -119,7 +122,7 @@ class _SignUpPageState extends State<SignUpPage>
           children: [
             SingleChildScrollView(
               child: Container(
-                padding: EdgeInsets.all(20),
+                padding: const EdgeInsets.all(20),
                 width: MediaQuery.of(context).size.width,
                 height: MediaQuery.of(context).size.height,
                 child: Column(
@@ -167,45 +170,13 @@ class _SignUpPageState extends State<SignUpPage>
                                 SizedBox(
                                   height: 10,
                                 ),
-                                // #name
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(7),
-                                      color: Colors.grey.withOpacity(0.03)),
-                                  child: TextField(
-                                    controller: nameController,
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                        hintText: "FullName",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                        border: InputBorder.none),
-                                  ),
-                                ),
+                                // #fullname
+                               textfield(hintText: 'Fullname', controller: nameController,),
                                 SizedBox(
                                   height: 10,
                                 ),
                                 // #email
-                                Container(
-                                  padding: EdgeInsets.symmetric(horizontal: 8),
-                                  height: 50,
-                                  decoration: BoxDecoration(
-                                      border: Border.all(color: Colors.grey),
-                                      borderRadius: BorderRadius.circular(7),
-                                      color: Colors.grey.withOpacity(0.03)),
-                                  child: TextField(
-                                    controller: emailController,
-                                    textInputAction: TextInputAction.next,
-                                    decoration: InputDecoration(
-                                        hintText: "Email",
-                                        hintStyle:
-                                            TextStyle(color: Colors.grey),
-                                        border: InputBorder.none),
-                                  ),
-                                ),
+                               textfield(hintText: "Email", controller: emailController),
                                 SizedBox(
                                   height: 10,
                                 ),
@@ -319,19 +290,14 @@ class _SignUpPageState extends State<SignUpPage>
                                 height: 10,
                               ),
                               // #button sign in
-                              Container(
-                                width: MediaQuery.of(context).size.width,
-                                height: 45,
-                                child: ElevatedButton(
-                                  onPressed: _openSignInPage,
-                                  child: Text("Sign up"),
-                                ),
-                              ),
+                             button(title: "Sign up", onPressed: _openHomePage)
                             ],
                           ),
                         ),
                       ],
-                    )),
+                    )), Divider(
+                      color: Colors.grey.shade800,
+                    ),
                     // already have an account??
                     GestureDetector(
                       onTap: () {
@@ -348,7 +314,7 @@ class _SignUpPageState extends State<SignUpPage>
                             style: TextStyle(color: Colors.grey),
                           ),
                           Text(
-                            "Log In",
+                            "Log in",
                             style: TextStyle(
                                 fontWeight: FontWeight.bold,
                                 color: Colors.black),

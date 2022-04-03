@@ -19,7 +19,7 @@ class ProfilePage extends StatefulWidget {
 
 class _ProfilePageState extends State<ProfilePage> {
   bool isLoading = false;
-  File? _image;
+  File? image;
   UserModel? user;
   int countPosts = 0;
   List<Post> items=[];
@@ -48,33 +48,46 @@ class _ProfilePageState extends State<ProfilePage> {
 
   // for edit user
   void _apiChangePhoto() {
-     if (_image == null) return;
-
+    if (image == null) return;
     setState(() {
       isLoading = true;
     });
-    FileService.uploadImage(_image!, FileService.folderUserImg)
-        .then((value) => _apiUpdateUser(value));
-  }
-
-  void _apiUpdateUser(String imgUrl) async {
-    setState(() {
-      isLoading = false;
-      user!.imgUrl = imgUrl;
-      print(user!.imgUrl);
+    FileService.uploadImage(image!, FileService.folderUserImg).then((imgUrl) {
+      setState(() {
+        isLoading = false;
+        user!.imgUrl = imgUrl;
+      });
+      DataService.updateUser(user!);
     });
-    await DataService.updateUser(user!);
   }
+  // void _apiChangePhoto() {
+  //    if (_image == null) return;
+  //
+  //   setState(() {
+  //     isLoading = true;
+  //   });
+  //   FileService.uploadImage(_image!, FileService.folderUserImg)
+  //       .then((value) => _apiUpdateUser(value));
+  // }
+  //
+  // void _apiUpdateUser(String imgUrl) async {
+  //   setState(() {
+  //     isLoading = false;
+  //     user!.imgUrl = imgUrl;
+  //     print(user!.imgUrl);
+  //   });
+  //   await DataService.updateUser(user!);
+  // }
 
-  Future getMyImage(ImageSource source) async {
+  Future<void> getMyImage(ImageSource source) async {
     final pickedImage = await ImagePicker().pickImage(source: source);
     setState(() {
       if (pickedImage != null) {
-        _image = File(pickedImage.path);
+        image = File(pickedImage.path);
+        _apiChangePhoto();
       }
     });
-    _apiChangePhoto();
-    return _image;
+    // return _image;
   }
 
   void _showPicker(context) {
@@ -116,7 +129,7 @@ class _ProfilePageState extends State<ProfilePage> {
     if(mounted){
       setState(() {
         items = posts;
-        countPosts = items.length;
+          countPosts = items.length;
       });
     }
   }
