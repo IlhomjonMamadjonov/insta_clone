@@ -1,10 +1,11 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
 import 'package:instagram_clone/models/user_model.dart' as model;
 import 'package:instagram_clone/pages/intro_pages/signIn_page.dart';
 import 'package:instagram_clone/pages/intro_pages/signUp_page.dart';
 import 'package:instagram_clone/services/pref_service.dart';
-import 'package:instagram_clone/utils/utils_service.dart';
+import 'package:instagram_clone/services/utils_service.dart';
 
 class AuthService {
   static final FirebaseAuth auth = FirebaseAuth.instance;
@@ -49,10 +50,10 @@ class AuthService {
     return map;
   }
 
-  static void signOutUser(BuildContext context) async {
+  static void signOutUser() async {
     await auth.signOut();
     Prefs.remove(StorageKeys.UID).then((value) {
-      Navigator.pushReplacementNamed(context, SignInPage.id);
+      Get.toNamed(SignInPage.id);
     });
   }
 
@@ -63,7 +64,7 @@ class AuthService {
       Navigator.pushAndRemoveUntil(context, MaterialPageRoute(builder: (_) => const SignUpPage()), (route) => false);
     } on FirebaseAuthException catch (e) {
       if (e.code == 'requires-recent-login') {
-        Utils.fireSnackBar('The user must re-authenticate before this operation can be executed.', context);
+        Utils.fireSnackBar('The user must re-authenticate before this operation can be executed.');
       }
     }
   }

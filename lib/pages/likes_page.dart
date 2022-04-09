@@ -1,8 +1,8 @@
 import 'package:flutter/material.dart';
-import 'package:instagram_clone/models/post_model.dart';
-import 'package:instagram_clone/services/data_service.dart';
-import 'package:instagram_clone/utils/appbar_widget.dart';
-import 'package:instagram_clone/utils/feed_widget.dart';
+import 'package:get/get.dart';
+import 'package:instagram_clone/controllers/like_controller.dart';
+import 'package:instagram_clone/views/feed_widget.dart';
+import 'package:instagram_clone/views/loading_widget.dart';
 
 class LikesPage extends StatefulWidget {
   const LikesPage({Key? key}) : super(key: key);
@@ -13,64 +13,49 @@ class LikesPage extends StatefulWidget {
 }
 
 class _LikesPageState extends State<LikesPage> {
-  bool isLoading = true;
-  List<Post> items = [];
-
-  @override
-  void initState() {
-    super.initState();
-    _apiLoadLikes();
-  }
-
-  void _apiLoadLikes() async {
-    setState(() {
-      isLoading = true;
-    });
-
-    DataService.loadLikes().then((posts) => {_resLoadLikes(posts)});
-  }
-
-  void _resLoadLikes(List<Post> posts) {
-    setState(() {
-      items = posts;
-      isLoading = false;
-    });
-  }
-
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(
-          "Activity",
-          style: TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
-        ),
-        centerTitle: false,
-        automaticallyImplyLeading: false,
-        elevation: 0,
-        backgroundColor: Colors.white,
-      ),
-      body: Stack(
-        children: [
-          items.length>0?
-          ListView.builder(
-            physics: BouncingScrollPhysics(),
-              itemCount: items.length,
-              itemBuilder: (context, index) {
-                return FeedWidget(
-                  post: items[index],
-                  function: _apiLoadLikes,
-                  load: _apiLoadLikes,
-                );
-              }):Center(
-            child: Text("No liked posts yet.",style: TextStyle(color: Colors.black,fontWeight: FontWeight.w600),),
-          ),
-          if (isLoading)
-            const Center(
-              child: CircularProgressIndicator(),
-            )
-        ],
-      ),
-    );
+    return GetBuilder<LikeController>(
+        init: LikeController(),
+        builder: (likeController) {
+          return Scaffold(
+            appBar: AppBar(
+              title: Text(
+                "Activity",
+                style:
+                    TextStyle(color: Colors.black, fontWeight: FontWeight.bold),
+              ),
+              centerTitle: false,
+              automaticallyImplyLeading: false,
+              elevation: 0,
+              backgroundColor: Colors.white,
+            ),
+            body: Stack(
+              children: [
+                likeController.items.isNotEmpty
+                    ? ListView.builder(
+                        physics: BouncingScrollPhysics(),
+                        itemCount: likeController.items.length,
+                        itemBuilder: (context, index) {
+                          return FeedWidget(
+                            post: likeController.items[index],
+                            function: likeController.apiLoadLikes,
+                            load: likeController.apiLoadLikes,
+                          );
+                        })
+                    : Center(
+                        child: Text(
+                          "No liked posts yet.",
+                          style: TextStyle(
+                              color: Colors.black, fontWeight: FontWeight.w600),
+                        ),
+                      ),
+                LoadingWidget(
+                  isLoading: likeController.isLoading,
+                )
+              ],
+            ),
+          );
+        });
   }
 }

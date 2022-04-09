@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:instagram_clone/models/post_model.dart';
 import 'package:instagram_clone/models/user_model.dart';
 import 'package:instagram_clone/services/pref_service.dart';
-import 'package:instagram_clone/utils/utils_service.dart';
+import 'package:instagram_clone/services/utils_service.dart';
 
 
 class DataService {

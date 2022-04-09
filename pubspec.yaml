@@ -25,6 +25,8 @@ dependencies:
   device_info_plus: ^3.2.2
   firebase_messaging: ^11.2.11
   flutter_local_notifications: ^9.4.0
+  get: ^4.6.1
+  flutter_styled_toast: ^2.0.0
 
 
 dev_dependencies:

@@ -2,10 +2,11 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:get/get.dart';
 import 'package:instagram_clone/models/post_model.dart';
 import 'package:instagram_clone/models/user_model.dart';
 import 'package:instagram_clone/services/data_service.dart';
-import 'package:instagram_clone/utils/utils_service.dart';
+import 'package:instagram_clone/services/utils_service.dart';
 
 class FeedWidget extends StatefulWidget {
   final Post post;
@@ -270,7 +271,7 @@ class _FeedWidgetState extends State<FeedWidget> {
                   InkWell(
                       onTap: () {
                         deletePost(widget.post);
-                        Navigator.of(context).pop();
+                        Get.back();
                       },
                       child: Text(
                         "Delete",
