@@ -17,42 +17,40 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomePageState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
     return GetBuilder<HomeController>(
-        init: HomeController(), builder: (homeController) {
-      return Scaffold(
-        body: PageView(
-          physics: const NeverScrollableScrollPhysics(),
-          controller: homeController.pageController,
-          children: [
-            const FeedPage(),
-            const SearchPage(),
-            const UploadPage(),
-            const LikesPage(),
-            ProfilePage()
-          ],
-          onPageChanged: (int i) =>
-              homeController.onPageChange(i)
-        ),
-        bottomNavigationBar: CupertinoTabBar(
-          currentIndex: homeController.currentIndex,
-          onTap: (int i) =>
-           homeController.onTapped(i),
-          activeColor: Colors.black,
-          items: [
-            const BottomNavigationBarItem(
-                icon: Icon(
+        init: HomeController(),
+        builder: (homeController) {
+          return Scaffold(
+            body: PageView(
+                controller: homeController.pageController,
+                children: [
+                  FeedPage(),
+                  SearchPage(),
+                  UploadPage(),
+                  LikesPage(),
+                  ProfilePage()
+                ],
+                onPageChanged: (int i) => homeController.onPageChange(i)),
+            bottomNavigationBar: CupertinoTabBar(
+              currentIndex: homeController.currentIndex,
+              onTap: (int i) => homeController.onTapped(i),
+              activeColor: Colors.black,
+              items: [
+                const BottomNavigationBarItem(
+                    icon: Icon(
                   Icons.home,
                   size: 32,
                 )),
-            const BottomNavigationBarItem(icon: Icon(Icons.search, size: 32)),
-            const BottomNavigationBarItem(icon: Icon(Icons.add_box, size: 32)),
-            const BottomNavigationBarItem(
-                icon: Icon(Icons.favorite_border, size: 32)),
-            BottomNavigationBarItem(
-                icon: Container(
+                const BottomNavigationBarItem(
+                    icon: Icon(Icons.search, size: 32)),
+                const BottomNavigationBarItem(
+                    icon: Icon(Icons.add_box, size: 32)),
+                const BottomNavigationBarItem(
+                    icon: Icon(Icons.favorite_border, size: 32)),
+                BottomNavigationBarItem(
+                    icon: Container(
                   width: 30,
                   height: 30,
                   decoration: BoxDecoration(
@@ -72,9 +70,9 @@ class _HomePageState extends State<HomePage> {
                     ),
                   ),
                 )),
-          ],
-        ),
-      );
-    });
+              ],
+            ),
+          );
+        });
   }
 }

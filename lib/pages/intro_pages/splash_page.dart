@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
-import 'package:instagram_clone/controllers/intro_controllers/splash_contoller.dart';
+import 'package:instagram_clone/controllers/intro_controllers/splash_controller.dart';
 
 
 class SplashPage extends StatefulWidget {

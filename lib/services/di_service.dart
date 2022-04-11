@@ -3,7 +3,7 @@ import 'package:instagram_clone/controllers/feed_controller.dart';
 import 'package:instagram_clone/controllers/home_controller.dart';
 import 'package:instagram_clone/controllers/intro_controllers/signIn_controller.dart';
 import 'package:instagram_clone/controllers/intro_controllers/signUp_controller.dart';
-import 'package:instagram_clone/controllers/intro_controllers/splash_contoller.dart';
+import 'package:instagram_clone/controllers/intro_controllers/splash_controller.dart';
 import 'package:instagram_clone/controllers/like_controller.dart';
 import 'package:instagram_clone/controllers/profile_controller.dart';
 import 'package:instagram_clone/controllers/search_controller.dart';

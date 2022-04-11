@@ -30,221 +30,231 @@ class _SignUpPageState extends State<SignUpPage>
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: GetBuilder<SignUpController>(
-        init: SignUpController(),
-        builder: (signUpController) {
-          return Scaffold(
-            body: Stack(
-              children: [
-                SingleChildScrollView(
-                  child: Container(
-                    padding: const EdgeInsets.all(20),
-                    width: MediaQuery.of(context).size.width,
-                    height: MediaQuery.of(context).size.height,
-                    child: Column(
-                      mainAxisAlignment: MainAxisAlignment.end,
-                      children: [
-                        Expanded(
-                            child: Column(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          crossAxisAlignment: CrossAxisAlignment.center,
-                          children: [
-                            // #Icon
-                            Container(
-                              height: 110,
-                              width: 110,
-                              alignment: Alignment.center,
-                              child: Icon(
-                                CupertinoIcons.person,
-                                size: 70,
-                              ),
-                              decoration: BoxDecoration(
-                                  borderRadius: BorderRadius.circular(60),
-                                  border: Border.all(
-                                      color: Colors.black, width: 2)),
-                            ),
-                            sBoxHeight(20),
-                            TabBar(
-                                indicatorColor: Colors.black,
-                                labelColor: Colors.black,
-                                controller: _tabController,
-                                tabs: [
-                                  Tab(
-                                    text: "EMAIL",
-                                  ),
-                                  Tab(
-                                    text: "PHONE",
-                                  ),
-                                ]),
-                            Expanded(
-                                child: TabBarView(
-                              children: [
-                                Column(
-                                  children: [
-                                    sBoxHeight(10),
-                                    // #fullname
-                                    textfield(
-                                      hintText: 'Fullname',
-                                      controller:
-                                          signUpController.nameController,
-                                    ),
-                                    sBoxHeight(10),
-                                    // #email
-                                    textfield(
-                                        hintText: "Email",
-                                        controller:
-                                            signUpController.emailController),
-                                    sBoxHeight(10),
-                                    // #Password
-                                    Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 8),
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                          borderRadius:
-                                              BorderRadius.circular(7),
-                                          color: Colors.grey.withOpacity(0.03)),
-                                      child: TextField(
-                                        controller: signUpController
-                                            .passwordController,
-                                        textInputAction: TextInputAction.next,
-                                        obscureText:
-                                            signUpController.isVisible
-                                                ? true
-                                                : false,
-                                        decoration: InputDecoration(
-                                            suffixIcon: InkWell(
-                                              onTap: () {
-                                                signUpController.isVisibled();
-                                              },
-                                              child: Icon(signUpController
-                                                      .isVisible
-                                                  ? Icons.visibility
-                                                  : Icons.visibility_off),
-                                            ),
-                                            hintText: "Password",
-                                            hintStyle:
-                                                TextStyle(color: Colors.grey),
-                                            border: InputBorder.none),
-                                      ),
-                                    ),
-
-                                    sBoxHeight(10),
-                                    // #Confirm Password
-                                    Container(
-                                      padding:
-                                          EdgeInsets.symmetric(horizontal: 8),
-                                      height: 50,
-                                      decoration: BoxDecoration(
-                                          border:
-                                              Border.all(color: Colors.grey),
-                                          borderRadius:
-                                              BorderRadius.circular(7),
-                                          color: Colors.grey.withOpacity(0.03)),
-                                      child: TextField(
-                                        controller: signUpController
-                                            .cpasswordController,
-                                        textInputAction: TextInputAction.done,
-                                        obscureText:
-                                            signUpController.isVisible
-                                                ? true
-                                                : false,
-                                        decoration: InputDecoration(
-                                            suffixIcon: InkWell(
-                                              onTap: () {
-                                                signUpController.isVisibled();
-                                              },
-                                              child: Icon(signUpController
-                                                      .isVisible
-                                                  ? Icons.visibility
-                                                  : Icons.visibility_off),
-                                            ),
-                                            hintText: "Confirm Password",
-                                            hintStyle:
-                                                TextStyle(color: Colors.grey),
-                                            border: InputBorder.none),
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                //phone
-                                Column(
-                                  children: [
-                                    sBoxHeight(15),
-                                    InternationalPhoneNumberInput(
-                                      maxLength: 12,
-                                      onInputChanged: (number) {
-                                        print(number.phoneNumber);
-                                      },
-                                      onInputValidated: (bool value) {
-                                        print(value);
-                                      },
-                                      selectorConfig: SelectorConfig(
-                                        selectorType:
-                                            PhoneInputSelectorType.DIALOG,
-                                      ),
-                                      ignoreBlank: true,
-                                      autoValidateMode: AutovalidateMode.always,
-                                      selectorTextStyle:
-                                          TextStyle(color: Colors.black),
-                                      initialValue:
-                                          signUpController.number,
-                                      textFieldController: signUpController
-                                          .numberController,
-                                      inputBorder: OutlineInputBorder(),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                              controller: _tabController,
-                            )),
-                            // #text
-                            Expanded(
+    return DefaultTabController(
+      length: 2,
+      initialIndex: 0,
+      child: SafeArea(
+        child: GetBuilder<SignUpController>(
+          init: SignUpController(),
+          builder: (signUpController) {
+            return Scaffold(
+              body: Stack(
+                children: [
+                  SingleChildScrollView(
+                    child: Container(
+                      padding: const EdgeInsets.all(20),
+                      width: Get.width,
+                      height: Get.height,
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Expanded(
                               child: Column(
-                                children: [
-                                  sBoxHeight(10),
-                                  Text(
-                                    "You may receive SMS updates from Instagram and can opt out at any time.",
-                                    textAlign: TextAlign.center,
-                                    style:
-                                        TextStyle(color: Colors.grey.shade700),
-                                  ),
-                                  sBoxHeight(10),
-                                  // #button sign in
-                                  button(
-                                      title: "Sign up",
-                                      onPressed: signUpController.openHomePage)
-                                ],
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            crossAxisAlignment: CrossAxisAlignment.center,
+                            children: [
+                              // #Icon
+                              Container(
+                                height: 110,
+                                width: 110,
+                                alignment: Alignment.center,
+                                child: Icon(
+                                  CupertinoIcons.person,
+                                  size: 70,
+                                ),
+                                decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(60),
+                                    border: Border.all(
+                                        color: Colors.black, width: 2)),
                               ),
-                            ),
-                          ],
-                        )),
-                        Divider(
-                          color: Colors.grey.shade800,
-                        ),
-                        // already have an account??
-                        GestureDetector(
-                            onTap: () {
-                              Get.to(() => const SignInPage());
-                            },
-                            child: haveAccount(
-                                question: "Already have an account",
-                                option: "Log in")),
-                        sBoxHeight(20),
-                      ],
+                              sBoxHeight(20),
+                              TabBar(
+                                  indicatorColor: Colors.black,
+                                  labelColor: Colors.black,
+                                  controller: _tabController,
+                                  tabs: [
+                                    Tab(
+                                      text: "EMAIL",
+                                    ),
+                                    Tab(
+                                      text: "PHONE",
+                                    ),
+                                  ]),
+                              SizedBox(
+                                height: Get.height*0.33,
+                                width: Get.width,
+                                  child: TabBarView(
+                                children: [
+                                  Column(
+                                    children: [
+                                      sBoxHeight(10),
+
+                                      // #fullname
+                                      textfield(
+                                        hintText: 'Fullname',
+                                        controller:
+                                            signUpController.nameController,
+                                      ),
+                                      sBoxHeight(10),
+
+                                      // #email
+                                      textfield(
+                                          hintText: "Email",
+                                          controller:
+                                              signUpController.emailController),
+                                      sBoxHeight(10),
+
+                                      // #Password
+                                      Container(
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 8),
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                            color: Colors.grey.withOpacity(0.03)),
+                                        child: TextField(
+                                          controller: signUpController
+                                              .passwordController,
+                                          textInputAction: TextInputAction.next,
+                                          obscureText:
+                                              signUpController.isVisible
+                                                  ? true
+                                                  : false,
+                                          decoration: InputDecoration(
+                                              suffixIcon: InkWell(
+                                                onTap: () {
+                                                  signUpController.isVisibled();
+                                                },
+                                                child: Icon(signUpController
+                                                        .isVisible
+                                                    ? Icons.visibility
+                                                    : Icons.visibility_off),
+                                              ),
+                                              hintText: "Password",
+                                              hintStyle:
+                                                  TextStyle(color: Colors.grey),
+                                              border: InputBorder.none),
+                                        ),
+                                      ),
+                                      sBoxHeight(10),
+
+                                      // #Confirm Password
+                                      Container(
+                                        padding:
+                                            EdgeInsets.symmetric(horizontal: 8),
+                                        height: 50,
+                                        decoration: BoxDecoration(
+                                            border:
+                                                Border.all(color: Colors.grey),
+                                            borderRadius:
+                                                BorderRadius.circular(7),
+                                            color: Colors.grey.withOpacity(0.03)),
+                                        child: TextField(
+                                          controller: signUpController
+                                              .cpasswordController,
+                                          textInputAction: TextInputAction.done,
+                                          obscureText:
+                                              signUpController.isVisible
+                                                  ? true
+                                                  : false,
+                                          decoration: InputDecoration(
+                                              suffixIcon: InkWell(
+                                                onTap: () {
+                                                  signUpController.isVisibled();
+                                                },
+                                                child: Icon(signUpController
+                                                        .isVisible
+                                                    ? Icons.visibility
+                                                    : Icons.visibility_off),
+                                              ),
+                                              hintText: "Confirm Password",
+                                              hintStyle:
+                                                  TextStyle(color: Colors.grey),
+                                              border: InputBorder.none),
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  //phone
+                                  Column(
+                                    children: [
+                                      sBoxHeight(15),
+                                      InternationalPhoneNumberInput(
+                                        maxLength: 12,
+                                        onInputChanged: (number) {
+                                          print(number.phoneNumber);
+                                        },
+                                        onInputValidated: (bool value) {
+                                          print(value);
+                                        },
+                                        selectorConfig: SelectorConfig(
+                                          selectorType:
+                                              PhoneInputSelectorType.DIALOG,
+                                        ),
+                                        ignoreBlank: true,
+                                        autoValidateMode: AutovalidateMode.always,
+                                        selectorTextStyle:
+                                            TextStyle(color: Colors.black),
+                                        initialValue:
+                                            signUpController.number,
+                                        textFieldController: signUpController
+                                            .numberController,
+                                        inputBorder: OutlineInputBorder(),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                                controller: _tabController,
+                              )),
+                              // #text
+                              Expanded(
+                                child: Column(
+                                  children: [
+                                    sBoxHeight(10),
+                                    Text(
+                                      "You may receive SMS updates from Instagram and can opt out at any time.",
+                                      textAlign: TextAlign.center,
+                                      style:
+                                          TextStyle(color: Colors.grey.shade700),
+                                    ),
+                                    sBoxHeight(10),
+                                    // #button sign in
+                                    button(
+                                        title: "Sign up",
+                                        onPressed: signUpController.openHomePage)
+                                  ],
+                                ),
+                              ),
+                            ],
+                          )),
+                          Divider(
+                            color: Colors.grey.shade800,
+                          ),
+
+                          // already have an account?
+                          GestureDetector(
+                              onTap: () {
+                                Get.to(() => const SignInPage());
+                              },
+                              child: haveAccount(
+                                  question: "Already have an account?",
+                                  option: " Log in")),
+                          sBoxHeight(20),
+                        ],
+                      ),
                     ),
                   ),
-                ),
-                LoadingWidget(
-                  isLoading: signUpController.isLoading,
-                )
-              ],
-            ),
-          );
-        },
+                  LoadingWidget(
+                    isLoading: signUpController.isLoading,
+                  )
+                ],
+              ),
+            );
+          },
+        ),
       ),
     );
   }

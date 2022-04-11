@@ -63,13 +63,13 @@ class Utils {
                 onPressed: () {
                   Get.back(result: false);
                 },
-                child: Text("Cencel"),
+                child: const Text("Cancel"),
               ),
               TextButton(
                 onPressed: () {
                   Get.back(result: true);
                 },
-                child: Text("Confirm"),
+                child: const Text("Confirm"),
               ),
             ],
           );

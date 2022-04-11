@@ -7,6 +7,7 @@ import 'package:instagram_clone/models/post_model.dart';
 import 'package:instagram_clone/models/user_model.dart';
 import 'package:instagram_clone/services/data_service.dart';
 import 'package:instagram_clone/services/utils_service.dart';
+import 'package:instagram_clone/views/loading_widget.dart';
 
 class FeedWidget extends StatefulWidget {
   final Post post;
@@ -81,38 +82,6 @@ class _FeedWidgetState extends State<FeedWidget> {
     }
   }
 
-  void _apiFollowUser(UserModel someone) async {
-    setState(() {
-      isLoading = true;
-    });
-    await DataService.followUser(someone);
-    setState(() {
-      someone.followed = true;
-      isLoading = false;
-    });
-    DataService.storePostsToMyFeed(someone);
-  }
-
-  void _apiUnFollowUser(UserModel someone) async {
-    setState(() {
-      isLoading = true;
-    });
-    await DataService.unFollowUser(someone);
-    setState(() {
-      someone.followed = false;
-      isLoading = false;
-    });
-    DataService.removePostsFromMyFeed(someone);
-  }
-
-  void updateFollow(UserModel user) {
-    if(user.followed) {
-      _apiUnFollowUser(user);
-    } else {
-      _apiFollowUser(user);
-    }
-  }
-
   @override
   Widget build(BuildContext context) {
     return Column(
@@ -160,9 +129,7 @@ class _FeedWidgetState extends State<FeedWidget> {
           },
           child: CachedNetworkImage(
             imageUrl: widget.post.postImage,
-            placeholder: (context, url) => Center(
-              child: CircularProgressIndicator(),
-            ),
+            placeholder: (context, url) => LoadingWidget(isLoading: true,),
             errorWidget: (context, url, error) => Icon(Icons.error),
             fit: BoxFit.cover,
           ),
@@ -240,9 +207,8 @@ class _FeedWidgetState extends State<FeedWidget> {
 
   void moreOptionMine(BuildContext context) {
     showModalBottomSheet(
-        shape: RoundedRectangleBorder(
+        shape: const RoundedRectangleBorder(
           borderRadius: BorderRadius.only(
-            // <-- SEE HERE
             topLeft: Radius.circular(25.0),
             topRight: Radius.circular(25.0),
           ),
@@ -270,6 +236,7 @@ class _FeedWidgetState extends State<FeedWidget> {
                       }),
                   InkWell(
                       onTap: () {
+                        print(widget.post.toJson());
                         deletePost(widget.post);
                         Get.back();
                       },

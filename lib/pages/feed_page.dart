@@ -56,7 +56,7 @@ class _FeedPageState extends State<FeedPage> {
                   children: [
                     // #story
                     SizedBox(
-                      height: Get.height / 7,
+                      height: Get.height / 6.2,
                       child: ListView.builder(
                           shrinkWrap: true,
                           itemCount: StoryList().elements.length,
